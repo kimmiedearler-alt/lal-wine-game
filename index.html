@@ -1,70 +1,487 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LAL x WINE 💗</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#ffb7dc">
+<title>LAL × WINE: Secret Office Love</title>
 <style>
-body{margin:0;background:#ffe0f3;font-family:sans-serif;text-align:center;color:#57305e}
-main{max-width:450px;margin:auto;padding:20px}
-.card{background:white;border:4px solid #ff91ce;border-radius:20px;padding:20px;margin:15px 0}
-h1{color:#fa3ca5;font-size:30px}
-button{background:#ff4eae;color:white;border:0;border-radius:14px;padding:14px;margin:6px;width:100%;font-size:17px;font-weight:bold}
-button:active{transform:scale(.97)}
-#game{display:none}
-#result{display:none}
-.score{font-size:35px;color:#f32b9b;font-weight:bold}
+*{box-sizing:border-box}
+body{margin:0;padding:12px;background:linear-gradient(#ffd9ef,#d7f5ff);font-family:system-ui,sans-serif;color:#382748}
+.app{max-width:520px;margin:auto}
+.top{display:flex;justify-content:space-between;gap:6px;margin:0 0 10px;font-size:12px;font-weight:900}
+.badge,.pill{background:white;border:3px solid #fff;border-radius:13px;padding:7px 10px;box-shadow:0 3px #e9a1ca}
+.pill{border:2px solid #f0afd1;border-radius:99px;box-shadow:none}
+.panel{background:#fff9fd;border:4px solid white;border-radius:22px;padding:14px;box-shadow:0 7px #df9bc5,0 12px 25px #9a6b9a35}
+.hidden{display:none!important}
+h1{font-size:clamp(27px,7vw,36px);line-height:1.1;color:#e74395;margin:7px 0;text-shadow:2px 2px #ffe1f1}
+h2{margin:5px 0;font-size:21px}
+.sub{font-size:14px;line-height:1.55;margin:8px 0 12px}
+.frame{border:4px solid white;border-radius:14px;overflow:hidden;box-shadow:0 0 0 3px #f2a3d0;margin-bottom:12px;background:#c7efff}
+canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+.stats{display:flex;gap:7px;margin:9px 0 12px}
+.stat{flex:1;text-align:center;background:white;border:2px solid #f5c0dd;border-radius:12px;padding:7px 3px;font-size:12px;font-weight:800}
+.stat strong{display:block;font-size:19px;color:#e74395}
+.btn{width:100%;border:0;border-radius:13px;padding:12px 8px;margin:4px 0;background:#ff5ba7;color:white;font-weight:900;font-size:15px;box-shadow:0 4px #bb397d;touch-action:manipulation}
+.btn.purple{background:#8d69dc;box-shadow:0 4px #6242a5}
+.btn.soft{background:white;color:#a43f7a;border:2px solid #f1afd2;box-shadow:0 3px #e5b1d0}
+.btn:active{transform:translateY(3px);box-shadow:0 1px #bb397d}
+.rule{background:#fff0f8;border:2px dashed #ee9ac6;border-radius:13px;padding:10px;font-size:13px;line-height:1.6;margin-top:10px}
+.progress{height:12px;border:2px solid white;background:#f8d7eb;border-radius:99px;overflow:hidden;margin:8px 0 12px}
+.progress div{height:100%;width:0;background:repeating-linear-gradient(135deg,#ff5ba7 0 8px,#ff8cc3 8px 16px);transition:width .2s}
+.task{font-size:17px;font-weight:900;margin:5px 0}
+.scene-name{font-size:12px;color:#9d5b8c;font-weight:800}
+.feedback{text-align:center;min-height:25px;margin:8px 0;font-weight:900;font-size:14px}
+.safe{color:#208b64}
+.danger{color:#d63b62}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row .btn{font-size:14px}
+.resultscore{text-align:center;color:#e74395;font-size:54px;font-weight:1000;line-height:1.2}
+.foot{text-align:center;font-size:11px;color:#875b81;margin:14px 0 2px}
 </style>
 </head>
 <body>
-<main>
-<div class="card">
-<h1>💗 แอบรักหัวหน้าสุดป่วน 💗</h1>
-<p>LAL × WINE</p>
-<p>หัวหน้าแผนกขาย × หัวหน้าแผนกบัญชี</p>
-<div style="font-size:55px">👩🏻‍💼 💕 👩🏻‍💼</div>
-<p>ภารกิจรักลับในบริษัท</p>
-<div id="home">
-<button onclick="start()">▶ เริ่มเกม</button>
-<button onclick="alert('ทำภารกิจให้สำเร็จ 10 ด่าน ด่านละ 10 คะแนน! เลือกจังหวะที่ไม่มีใครเห็น แล้วเก็บคะแนนให้ครบ 100')">📖 วิธีเล่น</button>
+<main class="app">
+<div class="top">
+<div class="badge">♥ LAL × WINE ♥</div>
+<div class="pill">PIXEL LOVE MINI GAME</div>
 </div>
+
+<section id="home" class="panel">
+<div class="frame"><canvas id="homeArt" width="320" height="190"></canvas></div>
+<h1>SECRET OFFICE<br>LOVE!</h1>
+<p class="sub">ความรักลับ ๆ ของหัวหน้าแผนกขายกับหัวหน้าแผนกบัญชี 💗<br>แอบหวานให้เนียน เก็บให้ครบ 100 คะแนน!</p>
+<div class="stats">
+<div class="stat">ด่านทั้งหมด<strong>10</strong></div>
+<div class="stat">ด่านละ<strong>10 แต้ม</strong></div>
+<div class="stat">เป้าหมาย<strong>100</strong></div>
 </div>
-<div id="game" class="card">
-<h2 id="stage"></h2>
-<p id="scene"></p>
-<h3 id="question"></h3>
-<div id="choices"></div>
-<p id="feedback"></p>
+<button class="btn" id="start">▶ เริ่มเกม</button>
+<button class="btn purple" id="rulesBtn">วิธีเล่น / กติกา</button>
+<div id="rules" class="rule hidden">
+<b>วิธีเล่น</b><br>
+• แต่ละด่านมีฉากและภารกิจใหม่<br>
+• ดูสัญญาณ ถ้าขึ้นว่า <b class="safe">ปลอดภัย!</b> ให้กดปุ่มทำภารกิจทันที<br>
+• ถ้ามีคนมองอยู่จะพลาดจังหวะ แต่ลองใหม่ได้<br>
+• สำเร็จด่านละ 10 คะแนน ครบ 10 ด่านได้ 100 คะแนน<br>
+เคล็ดลับ: รอให้ทุกคนหันไปทางอื่นก่อนแอบหวาน!
 </div>
-<div id="result" class="card">
-<h1>🎉 จบภารกิจ!</h1>
-<div class="score" id="final"></div>
-<p id="ending"></p>
-<button onclick="share()">𝕏 แชร์คะแนน</button>
-<button onclick="save()">📷 บันทึกรูปคะแนน</button>
-<button onclick="location.reload()">เล่นอีกครั้ง</button>
+</section>
+
+<section id="game" class="panel hidden">
+<div class="top">
+<span id="stageLabel">ด่าน 1/10</span>
+<span class="pill">คะแนน <b id="score">0</b>/100</span>
 </div>
+<div class="progress"><div id="bar"></div></div>
+<div class="frame"><canvas id="scene" width="320" height="190"></canvas></div>
+<div class="scene-name" id="sceneName"></div>
+<div class="task" id="task"></div>
+<p class="sub" id="hint"></p>
+<div class="stats">
+<div class="stat">สถานะ<strong id="status">เตรียมตัว</strong></div>
+<div class="stat">โอกาส<strong>∞</strong></div>
+</div>
+<div class="row">
+<button class="btn" id="action">♥ ทำภารกิจ!</button>
+<button class="btn purple" id="wait">👀 รอจังหวะ</button>
+</div>
+<div id="feedback" class="feedback" aria-live="polite">รอสัญญาณ...</div>
+<button class="btn soft hidden" id="next">ด่านต่อไป →</button>
+<button class="btn soft" id="quit">กลับหน้าแรก</button>
+</section>
+
+<section id="result" class="panel hidden">
+<div class="frame"><canvas id="resultArt" width="320" height="190"></canvas></div>
+<h1 style="text-align:center">ภารกิจรักสำเร็จ!</h1>
+<p class="sub" style="text-align:center">LAL และ WINE ผ่านภารกิจลับครบทุกด่านแล้ว</p>
+<div class="resultscore"><span id="finalScore">100</span><span style="font-size:22px">/100</span></div>
+<p id="resultMessage" style="text-align:center;font-weight:800">คู่รักลับสุดเนียน!</p>
+<button class="btn" id="share">𝕏 แชร์ความสำเร็จ</button>
+<button class="btn purple" id="save">▣ บันทึกรูปคะแนน</button>
+<button class="btn soft" id="again">เล่นอีกครั้ง ↻</button>
+<p id="saveHint" style="text-align:center;font-size:12px"></p>
+</section>
+
+<div class="foot">Made with ♥ for LAL × WINE | เล่นได้บนมือถือ</div>
 </main>
 <script>
-const data=[
-["ห้องประชุมเล็ก","ทุกคนกำลังก้มอ่านเอกสาร LAL นั่งข้าง WINE","จะแอบจับมือเมื่อไหร่?",["ตอนทุกคนก้มอ่านเอกสาร","ตอนทุกคนจ้องมาที่เรา"],0],
-["ทางเดินบริษัท","ทั้งคู่เดินสวนกัน มีพนักงานอยู่ใกล้ ๆ","จะส่งสัญญาณรักยังไง?",["ตะโกนเรียกที่รัก","สบตาแล้วยิ้มบาง ๆ"],1],
-["หน้าบริษัท","ถึงเวลาเลิกงาน พนักงานทยอยกลับบ้าน","เลือกจังหวะไหน?",["รอให้คนเดินผ่านไปก่อน","จับมือกลางฝูงชน"],0],
-["ห้องฝ่ายขาย","LAL กำลังทำรายงาน WINE แวะมาส่งเอกสาร","จะจีบกันแบบไหน?",["ส่งโน้ตลับใต้แฟ้ม","เปิดเพลงรักเสียงดัง"],0],
-["ห้องบัญชี","WINE อยู่คนเดียวชั่วครู่ LAL แวะคืนแฟ้ม","ทำอะไรดี?",["แอบส่งจุ๊บเร็ว ๆ","เรียกประชุมด่วน"],0],
-["ห้องประชุม","ทุกคนกำลังมองกราฟบนจอ","จังหวะไหนปลอดภัย?",["ตอนทุกคนมองมาที่เรา","ตอนทุกคนสนใจกราฟ"],1],
-["หน้าลิฟต์","ทั้งคู่รอลิฟต์ มีพนักงานอยู่ไม่ไกล","จะกระซิบตอนไหน?",["ตอนเสียงลิฟต์ดัง","ประกาศให้ทุกคนได้ยิน"],0],
-["ร้านเหล้าญี่ปุ่น","ทั้งคู่นั่งกินอาหารหลังเลิกงาน","จะทำอะไรน่ารัก ๆ?",["เกี่ยวก้อยใต้เคาน์เตอร์","ปีนโต๊ะร้องเพลงรัก"],0],
-["ลานโบว์ลิ่ง","WINE กำลังจะโยนบอล LAL อาสาสอน","จะใกล้ชิดกันยังไง?",["จับมือช่วยจัดท่าเมื่อเหมาะสม","ผลักอีกคนลงเลน"],0],
-["ฉากพิเศษ","ทั้งคู่ยืนชมวิวเมืองหลังจบวัน","ภารกิจสุดท้ายคืออะไร?",["ขอบคุณกันแล้วจับมือ","ทำเป็นไม่รู้จักกัน"],0]
+  const $=id=>document.getElementById(id);
+
+const missions=[
+["ห้องประชุมเล็ก","แอบจับมือใต้โต๊ะ","ทุกคนกำลังดูเอกสาร รอจังหวะที่ไม่มีใครมองลงมา",0,"♥ จับมือใต้โต๊ะ"],
+["ทางเดินบริษัท","ส่งสายตาหวาน ๆ","พนักงานเดินผ่านไปมา รอให้ทางเดินปลอดคน",1,"♥ ส่งสายตา"],
+["หน้าบริษัท","จับมือก่อนแยกย้าย","เลิกงานแล้ว แต่ยามหน้าประตูยังมองอยู่",2,"♥ จับมือแป๊บเดียว"],
+["ห้องทำงาน LAL","ส่งโน้ตลับให้ WINE","มีคนเดินผ่านกระจกหน้าห้อง จังหวะต้องเป๊ะ!",3,"♥ ส่งโน้ตลับ"],
+["ห้องทำงาน WINE","แอบส่งจุ๊บ","WINE กำลังตรวจบัญชี รอให้เพื่อนร่วมงานหันหลัง",4,"♥ ส่งจุ๊บ"],
+["ห้องประชุมใหญ่","แตะมือใต้แฟ้ม","หัวหน้าแผนกอื่นเริ่มสงสัย ทำตัวให้เป็นปกติ",5,"♥ แตะมือใต้แฟ้ม"],
+["หน้าลิฟต์","กระซิบคำหวาน","ลิฟต์กำลังจะเปิด รอจนคนข้างในเดินออกไปหมด",6,"♥ กระซิบรัก"],
+["ร้านเหล้าญี่ปุ่น","นั่งใกล้กันแบบเนียน ๆ","เพื่อนร่วมงานกำลังชนแก้ว รอให้ทุกคนหันไปถ่ายรูป",7,"♥ ขยับเข้าใกล้"],
+["ลานโบว์ลิ่ง","ช่วยจัดท่าโยนบอล","ทุกคนกำลังดูคะแนน รอจังหวะช่วยสอนโยนบอล",8,"♥ สอนโยนบอล"],
+["ฉากพิเศษ","ภารกิจรักครั้งสุดท้าย","โอกาสสุดท้ายที่จะบอกว่ารักกัน รอหัวใจขึ้นสีเขียว!",9,"♥ กอดกันเบา ๆ"]
 ];
-let n=0,score=0,done=false;
-function start(){document.getElementById('home').style.display='none';document.getElementById('game').style.display='block';render()}
-function render(){done=false;let d=data[n];document.getElementById('stage').textContent='ด่าน '+(n+1)+'/10 · คะแนน '+score+'/100';document.getElementById('scene').textContent=d[1];document.getElementById('question').textContent=d[2];document.getElementById('feedback').textContent='';let c=document.getElementById('choices');c.innerHTML='';d[3].forEach((v,i)=>{let b=document.createElement('button');b.textContent=v;b.onclick=()=>answer(i);c.appendChild(b)})}
-function answer(i){if(done)return;done=true;let d=data[n];let f=document.getElementById('feedback');if(i===d[4]){score+=10;f.textContent='สำเร็จ! +10 คะแนน 💗'}else{f.textContent='พลาดนิดเดียว รอบหน้าเอาใหม่นะ 💕'}document.querySelectorAll('#choices button').forEach(b=>b.disabled=true);let b=document.createElement('button');b.textContent=n===9?'ดูผลคะแนน':'ด่านต่อไป →';b.onclick=()=>{n++;if(n===10)finish();else render()};document.getElementById('choices').appendChild(b);document.getElementById('stage').textContent='ด่าน '+(n+1)+'/10 · คะแนน '+score+'/100'}
-function finish(){document.getElementById('game').style.display='none';document.getElementById('result').style.display='block';document.getElementById('final').textContent=score+'/100';document.getElementById('ending').textContent=score===100?'ความรักลับ ๆ สำเร็จสมบูรณ์! 💖':'ภารกิจจบแล้ว ลองอีกครั้งเพื่อเก็บคะแนนให้เต็ม!'}
-function share(){let t='ฉันทำภารกิจ LAL × WINE ได้ '+score+'/100 คะแนน 💗 #LALxWINE';location.href='https://twitter.com/intent/tweet?text='+encodeURIComponent(t)}
-function save(){let c=document.createElement('canvas');c.width=600;c.height=800;let x=c.getContext('2d');let g=x.createLinearGradient(0,0,600,800);g.addColorStop(0,'#ffb7e2');g.addColorStop(1,'#b7efff');x.fillStyle=g;x.fillRect(0,0,600,800);x.textAlign='center';x.fillStyle='#ed269b';x.font='bold 42px sans-serif';x.fillText('LAL × WINE',300,130);x.fillStyle='#56305e';x.font='30px sans-serif';x.fillText('แอบรักหัวหน้าสุดป่วน',300,205);x.fillStyle='#fff';x.fillRect(60,270,480,220);x.fillStyle='#f32b9b';x.font='bold 80px sans-serif';x.fillText(score+'/100',300,410);x.fillStyle='#56305e';x.font='25px sans-serif';x.fillText('คะแนนความรัก 💗',300,555);x.fillText('MISSION COMPLETE!',300,640);let a=document.createElement('a');a.download='lal-wine-score.png';a.href=c.toDataURL('image/png');a.click()}
+
+const colors=[
+"#f5d8ef","#d7f4ff","#ffdfcf","#ffe8c7","#e4ddff",
+"#d5e9ff","#f6e2ff","#ffc7a8","#c7efff","#ffd3e9"
+];
+
+function rect(c,x,y,w,h,col){
+c.fillStyle=col;
+c.fillRect(x,y,w,h);
+}
+
+function person(c,x,y,hair,shirt,skin,glasses=false){
+rect(c,x+5,y,12,3,hair);
+rect(c,x+2,y+3,18,13,hair);
+rect(c,x+5,y+4,12,10,skin);
+rect(c,x+4,y+3,3,7,hair);
+rect(c,x+15,y+3,4,7,hair);
+rect(c,x+7,y+8,2,2,"#34264b");
+rect(c,x+14,y+8,2,2,"#34264b");
+rect(c,x+8,y+12,6,1,"#d76c86");
+rect(c,x+3,y+16,17,14,shirt);
+rect(c,x+5,y+30,5,9,"#34304b");
+rect(c,x+14,y+30,5,9,"#34304b");
+
+if(glasses){
+rect(c,x+4,y+7,6,4,"#5b8caa");
+rect(c,x+13,y+7,6,4,"#5b8caa");
+rect(c,x+10,y+8,3,1,"#5b8caa");
+}
+}
+
+function draw(canvas,bg,party=false){
+let c=canvas.getContext("2d");
+c.imageSmoothingEnabled=false;
+rect(c,0,0,320,190,colors[bg%10]);
+rect(c,0,142,320,48,bg===7?"#a96c58":bg===8?"#a8c5df":"#d4a6c8");
+rect(c,0,139,320,4,"#fff4fb");
+
+if([0,5].includes(bg)){
+rect(c,28,26,264,42,"#fff9ff");
+rect(c,34,32,252,30,"#a6d9f3");
+rect(c,44,40,232,2,"white");
+rect(c,90,83,140,7,"#9865b5");
+rect(c,100,90,8,38,"#8c63a8");
+rect(c,212,90,8,38,"#8c63a8");
+rect(c,35,122,250,8,"#9e6cb7");
+for(let x=48;x<275;x+=35)rect(c,x,108,14,14,"#f9b4d7");
+}
+else if([1,6].includes(bg)){
+rect(c,18,20,82,106,"#fff9ff");
+rect(c,24,26,70,94,"#bce8f8");
+rect(c,116,24,94,4,"white");
+rect(c,116,31,94,4,"white");
+rect(c,245,22,48,112,"#b88ec8");
+rect(c,251,28,36,100,"#d8c1f0");
+}
+else if(bg===2){
+rect(c,30,18,112,94,"#fff9ff");
+rect(c,36,24,100,82,"#a6e5ff");
+rect(c,177,20,112,106,"#fff9ff");
+rect(c,183,26,100,94,"#f5b8d8");
+}
+else if([3,4].includes(bg)){
+rect(c,20,20,96,82,"#fff9ff");
+rect(c,26,26,84,70,"#a9e5ff");
+rect(c,230,18,65,104,"#b78ed1");
+rect(c,237,25,51,90,"#d8c2ef");
+rect(c,25,113,98,26,"#b88ec8");
+rect(c,31,119,86,14,"#fff0f9");
+}
+else if(bg===7){
+rect(c,18,22,284,104,"#7c4b6d");
+for(let x=30;x<300;x+=38){
+rect(c,x,30,25,22,"#ffc56b");
+rect(c,x+4,34,17,14,"#ffedb8");
+}
+rect(c,25,94,270,7,"#c78c63");
+}
+else if(bg===8){
+rect(c,18,18,284,112,"#eafaff");
+for(let i=0;i<10;i++){
+rect(c,28+i*27,25,13,18,i%2?"#f8b2d6":"#b7c8ff");
+}
+rect(c,24,119,272,10,"#d4a2d1");
+}
+else{
+rect(c,25,20,270,105,"#fff7fd");
+rect(c,34,29,252,87,"#ffc6e4");
+for(let i=0;i<5;i++){
+rect(c,55+i*48,42,12,12,"white");
+rect(c,59+i*48,46,4,4,"#ff70b0");
+}
+}
+
+if([0,1,3,4,5,6].includes(bg)){
+rect(c,8,112,20,24,"#9c6bb3");
+rect(c,4,102,28,12,"#65b98a");
+rect(c,12,93,10,14,"#7bca8b");
+}
+
+person(c,105,88,"#f4ce63","#6b7f9c","#f5c4a2");
+person(c,165,88,"#5a3a45","#303b61","#f3c2a7",true);
+rect(c,115,105,3,10,"white");
+rect(c,115,115,3,5,"#e74c96");
+
+if(bg===0||bg===5){
+rect(c,70,126,180,8,"#bc8bc9");
+rect(c,80,120,160,7,"#ffe8f5");
+}
+
+if(bg===7){
+rect(c,122,127,30,5,"#fff0d4");
+rect(c,174,127,30,5,"#fff0d4");
+}
+
+if(bg===8){
+for(let x=32;x<280;x+=42)rect(c,x,149,28,8,"white");
+}
+
+if(party){
+for(let i=0;i<22;i++){
+rect(c,(i*37+13)%310,(i*19+7)%120,4,4,
+i%3===0?"#ff4f9b":i%3===1?"white":"#ffd34d");
+}
+rect(c,102,53,116,20,"white");
+c.fillStyle="#e74395";
+c.font="bold 10px monospace";
+c.fillText("LOVE COMPLETE!",112,66);
+}
+}
+
+draw($("homeArt"),0);
+draw($("resultArt"),9,true);
+
+function show(id){
+["home","game","result"].forEach(k=>
+$(k).classList.toggle("hidden",k!==id)
+);
+}
+
+let stage=0,score=0,safe=false,done=false,phase=0,timer;
+
+function start(){
+stage=0;
+score=0;
+show("game");
+load();
+}
+
+function load(){
+clearTimeout(timer);
+safe=false;
+done=false;
+phase=0;
+
+let m=missions[stage];
+
+$("stageLabel").textContent=`ด่าน ${stage+1}/10`;
+$("score").textContent=score;
+$("bar").style.width=score+"%";
+$("sceneName").textContent=m[0];
+$("task").textContent=m[1];
+$("hint").textContent=m[2];
+$("action").textContent=m[4];
+$("status").textContent="เตรียมตัว";
+$("status").style.color="#e74395";
+$("feedback").textContent="รอสัญญาณ...";
+$("feedback").className="feedback";
+$("next").classList.add("hidden");
+$("action").classList.remove("hidden");
+$("wait").classList.remove("hidden");
+
+draw($("scene"),m[3]);
+timer=setTimeout(signal,900);
+}
+
+function signal(){
+if(done)return;
+phase++;
+
+if(phase%2===1){
+safe=false;
+$("status").textContent="มีคนมอง!";
+$("status").style.color="#d63b62";
+$("feedback").textContent="อย่าเพิ่งทำภารกิจ! 👀";
+$("feedback").className="feedback danger";
+timer=setTimeout(signal,900+Math.random()*900);
+}
+else{
+safe=true;
+$("status").textContent="ปลอดภัย!";
+$("status").style.color="#208b64";
+$("feedback").textContent="ตอนนี้เลย! รีบแตะปุ่มภารกิจ!";
+$("feedback").className="feedback safe";
+
+timer=setTimeout(()=>{
+if(!done){
+safe=false;
+$("status").textContent="มีคนกลับมามอง!";
+$("status").style.color="#d63b62";
+$("feedback").textContent="พลาดจังหวะแล้ว รอรอบต่อไปนะ";
+$("feedback").className="feedback danger";
+timer=setTimeout(signal,800);
+}
+},1400+Math.random()*500);
+}
+}
+
+function action(){
+if(done)return;
+
+if(!safe){
+$("feedback").textContent="เกือบโดนจับได้! รอคำว่า “ปลอดภัย!” ก่อนนะ";
+$("feedback").className="feedback danger";
+$("status").textContent="ยังไม่ปลอดภัย";
+$("status").style.color="#d63b62";
+return;
+}
+
+done=true;
+clearTimeout(timer);
+score+=10;
+
+$("score").textContent=score;
+$("bar").style.width=score+"%";
+$("status").textContent="สำเร็จ!";
+$("status").style.color="#208b64";
+$("feedback").textContent="เนียนมาก! +10 คะแนน ♥";
+$("feedback").className="feedback safe";
+
+draw($("scene"),missions[stage][3],true);
+
+$("action").classList.add("hidden");
+$("wait").classList.add("hidden");
+$("next").classList.remove("hidden");
+$("next").textContent=stage===9?"ดูผลคะแนน ✨":"ด่านต่อไป →";
+}
+
+function next(){
+if(stage<9){
+stage++;
+load();
+}
+else{
+finish();
+}
+}
+
+function finish(){
+show("result");
+$("finalScore").textContent=score;
+$("resultMessage").textContent=
+score===100?"คู่รักลับสุดเนียน! ทำภารกิจครบ 100 คะแนน 💗":"หวานได้เนียนมาก!";
+draw($("resultArt"),9,true);
+}
+
+function card(){
+let c=document.createElement("canvas");
+c.width=640;
+c.height=800;
+let x=c.getContext("2d");
+
+x.fillStyle="#ffd6ec";
+x.fillRect(0,0,640,800);
+
+for(let i=0;i<45;i++){
+x.fillStyle=i%2?"#fff2fa":"#ffb7dc";
+x.fillRect(i*71%640,i*113%800,12,12);
+}
+
+x.fillStyle="#fff9fd";
+x.fillRect(35,35,570,730);
+x.strokeStyle="white";
+x.lineWidth=10;
+x.strokeRect(35,35,570,730);
+
+x.textAlign="center";
+x.fillStyle="#e74395";
+x.font="bold 40px sans-serif";
+x.fillText("LAL × WINE",320,100);
+
+x.font="bold 32px sans-serif";
+x.fillText("SECRET OFFICE LOVE!",320,150);
+
+x.drawImage($("resultArt"),100,185,440,260);
+
+x.fillStyle="#382748";
+x.font="bold 26px sans-serif";
+x.fillText("ภารกิจรักสำเร็จ!",320,505);
+
+x.fillStyle="#e74395";
+x.font="bold 100px sans-serif";
+x.fillText(score,320,620);
+
+x.fillStyle="#382748";
+x.font="bold 28px sans-serif";
+x.fillText("/ 100 POINTS",320,665);
+
+x.font="22px sans-serif";
+x.fillText("PLAY WITH LOVE ♥",320,715);
+
+return c;
+}
+
+$("start").onclick=start;
+
+$("rulesBtn").onclick=()=>
+$("rules").classList.toggle("hidden");
+
+$("action").onclick=action;
+
+$("wait").onclick=()=>{
+$("feedback").textContent=safe
+?"จังหวะปลอดภัยแล้ว รีบกดภารกิจ!"
+:"กำลังสังเกตคนรอบ ๆ อยู่...";
+if(safe)$("feedback").className="feedback safe";
+};
+
+$("next").onclick=next;
+
+$("quit").onclick=()=>{
+clearTimeout(timer);
+show("home");
+};
+
+$("again").onclick=start;
+
+$("share").onclick=()=>{
+let t=`ฉันทำภารกิจลับ LAL × WINE ได้ ${score}/100 คะแนน! 💗 Secret Office Love Mini Game`;
+window.open(
+"https://twitter.com/intent/tweet?text="+encodeURIComponent(t),
+"_blank",
+"noopener"
+);
+};
+
+$("save").onclick=()=>{
+card().toBlob(blob=>{
+if(!blob)return;
+
+let file=new File([blob],"lal-wine-score.png",{
+type:"image/png"
+});
+
+if(navigator.canShare&&navigator.canShare({files:[file]})){
+navigator.share({
+files:[file],
+title:"LAL × WINE score"
+}).then(()=>{
+$("saveHint").textContent="เลือกบันทึกลงรูปภาพจากเมนูแชร์ได้เลย";
+}).catch(()=>{});
+}
+else{
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="lal-wine-score.png";
+a.click();
+URL.revokeObjectURL(a.href);
+$("saveHint").textContent="ถ้าไม่เห็นในแกลเลอรี ให้เปิด Downloads แล้วบันทึกรูป";
+}
+},"image/png");
+};
 </script>
 </body>
-  </html>
+</html>
